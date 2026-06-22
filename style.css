@@ -113,3 +113,98 @@
 
 /* takeover: lock background scroll while the shell owns the screen */
 body.palimpsest-lock { overflow: hidden !important; }
+
+/* ============================================================================
+ * COVER — visual design by sinnerconsort (keyhole-in-rune-wheel).
+ * Scoped under #palimpsest-cover; generic class names (.line/.node/.glyph)
+ * are confined here so they can't leak onto ST. Keyframes prefixed pmp-.
+ * ========================================================================== */
+
+#palimpsest-cover{
+  --ground:#100c0c; --ground-deep:#0a0707;
+  --ink:#d7c8a6; --ink-dim:rgba(215,200,166,.42); --ink-ghost:rgba(200,184,150,.085);
+  --gilt:#c9a44e; --gilt-dim:rgba(201,164,78,.40); --gilt-faint:rgba(201,164,78,.16); --gilt-glow:rgba(201,164,78,.18);
+  --spectral:#e4f6ff; --spectral-mid:#7fcfe6; --spectral-glow:rgba(120,210,235,.6);
+  --frame:rgba(201,164,78,.16); --frame-bright:rgba(201,164,78,.32);
+  position:absolute; inset:0; z-index:2; flex-direction:column; align-items:center;
+  color:var(--ink); font-family:'IM Fell English',Georgia,serif; overflow:hidden;
+  background:radial-gradient(ellipse at 50% 40%, var(--gilt-glow) 0%, transparent 55%),
+            radial-gradient(ellipse at 50% 120%, rgba(0,0,0,.6) 0%, transparent 60%), var(--ground);
+  transition:background .8s;}
+#palimpsest-cover.opening, #palimpsest-cover.opened{
+  background:radial-gradient(ellipse at 50% 42%, var(--spectral-glow) 0%, transparent 60%),
+            radial-gradient(ellipse at 50% 120%, rgba(0,0,0,.72) 0%, transparent 60%), #090c10;}
+#palimpsest-cover::before{content:""; position:absolute; inset:0; pointer-events:none; z-index:0; opacity:.5; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+#palimpsest-cover>*{position:relative; z-index:1;}
+
+#palimpsest-cover .plate{position:absolute; inset:18px; z-index:1; border:1px solid var(--frame); pointer-events:none; transition:border-color .8s;}
+#palimpsest-cover.opening .plate, #palimpsest-cover.opened .plate{border-color:rgba(120,210,235,.22);}
+#palimpsest-cover .corner{position:absolute; font-size:9px; color:var(--gilt-dim); line-height:1;}
+#palimpsest-cover .c-tl{top:-6px;left:-6px;} #palimpsest-cover .c-tr{top:-6px;right:-6px;}
+#palimpsest-cover .c-bl{bottom:-6px;left:-6px;} #palimpsest-cover .c-br{bottom:-6px;right:-6px;}
+
+#palimpsest-cover .bleed{position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+#palimpsest-cover .bleed span{position:absolute; color:var(--ink-ghost); font-family:'IM Fell English SC',serif; font-size:13px; letter-spacing:2px; transform:rotate(var(--r,0deg));}
+
+#palimpsest-cover .head{text-align:center; padding-top:max(50px, calc(env(safe-area-inset-top) + 38px));}
+#palimpsest-cover .wordmark{font-family:'Cinzel',Georgia,serif; font-weight:600; font-size:22px; letter-spacing:9px; color:var(--gilt); text-shadow:0 0 28px var(--gilt-glow); transition:color .8s,text-shadow .8s;}
+#palimpsest-cover.opening .wordmark, #palimpsest-cover.opened .wordmark{color:var(--spectral); text-shadow:0 0 26px var(--spectral-glow);}
+#palimpsest-cover .subtitle{font-style:italic; font-size:13.5px; color:var(--ink-dim); margin-top:4px; letter-spacing:.4px;}
+
+#palimpsest-cover .stage{flex:1 1 auto; display:flex; align-items:center; justify-content:center; width:100%;}
+#palimpsest-cover .wheel{width:min(78vw,330px); height:min(78vw,330px); position:relative;}
+#palimpsest-cover .wheel svg{width:100%; height:100%; overflow:visible; display:block;}
+#palimpsest-cover .ghostwheel{position:absolute; inset:0; opacity:.16; transform:rotate(13deg) scale(.96); filter:blur(.5px);}
+
+#palimpsest-cover .line{stroke:var(--gilt-dim); fill:none; stroke-width:1; transition:stroke .7s, filter .7s;}
+#palimpsest-cover .tick{stroke:var(--gilt-faint); stroke-width:1; transition:stroke .7s;}
+#palimpsest-cover .node{fill:none; stroke:var(--gilt-dim); stroke-width:1; transition:stroke .7s;}
+#palimpsest-cover .glyph{fill:var(--gilt-dim); font-family:'JetBrains Mono',monospace; font-size:11px; text-anchor:middle; dominant-baseline:central; transition:fill .7s;}
+#palimpsest-cover .glyph.lit{fill:var(--ink);}
+#palimpsest-cover .rot{transform-origin:150px 150px; animation:pmp-spin 140s linear infinite;}
+@keyframes pmp-spin{to{transform:rotate(360deg);}}
+#palimpsest-cover .hubglow{fill:var(--gilt-glow); opacity:.4; transform-origin:150px 150px; animation:pmp-breathe 6s ease-in-out infinite; transition:fill .7s;}
+@keyframes pmp-breathe{0%,100%{opacity:.28; transform:scale(1);}50%{opacity:.55; transform:scale(1.08);}}
+
+#palimpsest-cover.opening .rot{animation-duration:6s;}
+#palimpsest-cover.opening .line, #palimpsest-cover.opened .line{stroke:var(--spectral-mid); filter:drop-shadow(0 0 3px var(--spectral-mid)) drop-shadow(0 0 8px var(--spectral-glow));}
+#palimpsest-cover.opening .tick, #palimpsest-cover.opened .tick{stroke:var(--spectral-mid);}
+#palimpsest-cover.opening .node, #palimpsest-cover.opened .node{stroke:var(--spectral-mid);}
+#palimpsest-cover.opening .glyph, #palimpsest-cover.opened .glyph{fill:var(--spectral-mid); animation:pmp-flick 1.4s steps(2) infinite;}
+@keyframes pmp-flick{50%{opacity:.4;}}
+#palimpsest-cover.opening .hubglow, #palimpsest-cover.opened .hubglow{fill:var(--spectral-glow); animation-duration:1.6s;}
+#palimpsest-cover.opening .spoke{stroke-dasharray:200; animation:pmp-draw 1s ease forwards;}
+@keyframes pmp-draw{from{stroke-dashoffset:200;}to{stroke-dashoffset:0;}}
+
+#palimpsest-cover .heart *{transition:fill .6s, stroke .6s, opacity .7s, transform .7s;}
+#palimpsest-cover .escut{fill:none; stroke:var(--gilt-dim); stroke-width:1.2;}
+#palimpsest-cover .rivet{fill:var(--gilt-dim);}
+#palimpsest-cover.opened .escut{stroke:var(--spectral-mid); filter:drop-shadow(0 0 4px var(--spectral-glow));}
+#palimpsest-cover.opened .rivet{fill:var(--spectral);}
+#palimpsest-cover .kh{fill:var(--ground-deep); stroke:var(--gilt-dim); stroke-width:1;}
+#palimpsest-cover.opening .kh{fill:var(--spectral-mid); stroke:var(--spectral-mid); filter:drop-shadow(0 0 6px var(--spectral-glow)); animation:pmp-khflick 1.3s steps(2) infinite;}
+@keyframes pmp-khflick{50%{opacity:.55;}}
+#palimpsest-cover.opened .kh{fill:#fff; stroke:var(--spectral); filter:drop-shadow(0 0 7px #fff) drop-shadow(0 0 18px var(--spectral-glow)); animation:none;}
+#palimpsest-cover .bloom{opacity:0; transition:opacity .7s;}
+#palimpsest-cover.opening .bloom{opacity:.3;}
+#palimpsest-cover.opened .bloom{opacity:.75;}
+#palimpsest-cover .rays{transform-origin:150px 150px; opacity:0; transform:scale(.4); transition:opacity .8s, transform .8s;}
+#palimpsest-cover.opened .rays{opacity:.5; transform:scale(1); animation:pmp-shimmer 4.5s ease-in-out infinite;}
+@keyframes pmp-shimmer{0%,100%{opacity:.32;}50%{opacity:.62;}}
+#palimpsest-cover .ray{fill:var(--spectral-mid);}
+#palimpsest-cover .wave{fill:none; stroke:var(--spectral); stroke-width:2; opacity:0; transform-origin:150px 150px;}
+#palimpsest-cover.opened .wave{animation:pmp-wave 1s ease-out;}
+@keyframes pmp-wave{0%{opacity:.85; transform:scale(.3);}100%{opacity:0; transform:scale(2.6);}}
+
+#palimpsest-cover .foot{flex:0 0 auto; padding-bottom:18px; text-align:center;}
+#palimpsest-cover .orn{color:var(--gilt-dim); letter-spacing:7px; font-size:11px; margin-bottom:10px; user-select:none;}
+#palimpsest-cover .flavor{font-style:italic; font-size:15px; color:var(--ink-dim); min-height:1.4em; transition:color .5s;}
+#palimpsest-cover.opening .flavor, #palimpsest-cover.opened .flavor{color:var(--spectral);}
+#palimpsest-cover .cover-open{margin-top:16px; background:transparent; color:var(--gilt); cursor:pointer;
+  border:1px solid var(--frame-bright); border-radius:2px; padding:11px 20px;
+  font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase;}
+#palimpsest-cover.opening .cover-open, #palimpsest-cover.opened .cover-open{opacity:.3; pointer-events:none;}
+#palimpsest-cover .cover-open:active{background:var(--spectral-glow);}
+
+@media (prefers-reduced-motion:reduce){#palimpsest-cover .rot,#palimpsest-cover .hubglow,#palimpsest-cover .glyph,#palimpsest-cover .rays{animation:none !important;}}
