@@ -24,7 +24,7 @@
 const NS = "palimpsest";
 const Z  = 31000;
 let DEBUG = true;            // <- set false once happy; gates diagnostic toasts
-const VER = '0.9.1';
+const VER = '0.9.2';
 
 function getCtx() {
     try { return SillyTavern.getContext(); }
@@ -316,7 +316,7 @@ function subjectBlock() {
     if (f.description) { const v = charField('description'); if (v) parts.push(v); }
     if (f.personality) { const v = charField('personality'); if (v) parts.push('Personality: ' + v); }
     if (f.scenario)    { const v = charField('scenario');    if (v) parts.push('Scenario: ' + v); }
-    if (f.first_mes)   { const v = charField('first_mes');   if (v) parts.push('Canonical opening (reference only — do NOT replay it): ' + v); }
+    if (f.first_mes)   { const v = charField('first_mes');   if (v) parts.push('Canonical scenario / first message:\n' + v); }
     const body = parts.length ? '\n' + parts.join('\n') : '';
     return 'THE TELLING CONCERNS: ' + name + body
         + '\n(This is the established world: treat its races, customs, and details as TRUE — never contradict them, and when one of them appears, render it specifically rather than a vague substitute. '
@@ -375,12 +375,11 @@ const CRAFT =
 
 async function genOpeningView() {
     const seeds = await loreSeedBlock();
-    const prompt =
-        'You are the narrator of a second-person interactive gamebook. Begin a NEW telling — ' +
-        'invent a fresh opening SITUATION (not the character\'s canonical intro). ' +
-        'Place the reader in a concrete moment true to the world. ' +
-        'AVOID the generic "wake up wounded/amnesiac in a strange stone room" opening unless the world specifically calls for it.\n\n' +
-        personaBlock() + '\n' + subjectBlock() + '\n' + seeds + CRAFT;
+    const faithful = getFields().first_mes;   // user showed the first message -> they want it honored
+    const lead = faithful
+        ? 'You are the narrator of a second-person interactive gamebook. OPEN this telling FROM the card\'s established scenario and canonical opening shown below — honor that setup as the starting situation and STAY FAITHFUL to it; do not derail into a different scene or premise. Render it in second person ("you") and carry it forward naturally into the first beat.'
+        : 'You are the narrator of a second-person interactive gamebook. Begin a NEW telling — invent a fresh opening SITUATION (not the character\'s canonical intro). Place the reader in a concrete moment true to the world. AVOID the generic "wake up wounded/amnesiac in a strange stone room" opening unless the world specifically calls for it.';
+    const prompt = lead + '\n\n' + personaBlock() + '\n' + subjectBlock() + '\n' + seeds + CRAFT;
     return viewFrom(parsePage(await rawGen(prompt)));
 }
 async function genContinuationView(seedLabel, prevProse) {
@@ -667,7 +666,7 @@ function settingsView() {
         + '</div>'
         + '<div class="palimpsest-empty" style="margin-top:6px;">What Palimpsest reads from the card (tap to toggle):</div>'
         + fieldRows
-        + '<div class="palimpsest-empty">First Message is the card\'s scripted opening — leave OFF so Palimpsest writes a fresh telling instead of replaying it.</div>'
+        + '<div class="palimpsest-empty">First Message OFF → Palimpsest writes a fresh telling. ON → it opens faithfully FROM the card\'s scenario &amp; first message (turn it on when you want the card\'s intended start).</div>'
         + '<div class="palimpsest-row" id="palimpsest-newtelling">✦ Begin a new telling</div>'
         + '<div class="palimpsest-row" id="palimpsest-reload">⟳ Reload story.json</div>'
         + '<div class="palimpsest-empty">Story: ' + (STORY?.title || '—') + ' · v' + VER + '</div>'
